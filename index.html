@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roza Tracker</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#2E7D32">
+</head>
+<body>
+  <header>
+    <h1>Ramadan <span id="year-display"></span></h1>
+    <p id="today-date"></p>
+  </header>
+
+  <div id="progress-section">
+    <div class="progress-item">
+      <div class="progress-label">
+        <span>Ramadan</span>
+        <span id="ramadan-progress-text"></span>
+      </div>
+      <div class="progress-bar"><div id="ramadan-bar" class="progress-fill green"></div></div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-label">
+        <span>Fasts</span>
+        <span id="fasts-progress-text"></span>
+      </div>
+      <div class="progress-bar"><div id="fasts-bar" class="progress-fill"></div></div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-label">
+        <span>Shawwal</span>
+        <span id="shawwal-progress-text"></span>
+      </div>
+      <div class="progress-bar"><div id="shawwal-bar" class="progress-fill orange"></div></div>
+    </div>
+    <div class="progress-item">
+      <div class="progress-label">
+        <span>Quran</span>
+        <span id="quran-progress-text"></span>
+      </div>
+      <div class="progress-bar"><div id="quran-bar" class="progress-fill purple"></div></div>
+    </div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="ramadan">Ramadan</button>
+    <button class="tab" data-tab="shawwal">Shawwal</button>
+    <button class="tab" data-tab="missed">Missed</button>
+    <button class="tab" data-tab="quran">Quran</button>
+  </nav>
+
+  <main>
+    <div id="ramadan" class="tab-content active">
+      <div id="ramadan-dates">
+    <div class="dates-row">
+      <span>Start: <span id="start-date-display"></span></span>
+      <span>End: <span id="end-date-display"></span></span>
+    </div>
+    <div class="edit-buttons">
+      <button id="edit-start" class="edit-btn">Edit Start</button>
+      <button id="edit-end" class="edit-btn">Edit End</button>
+    </div>
+  </div>
+      <div id="ramadan-grid" class="grid"></div>
+    </div>
+    <div id="shawwal" class="tab-content">
+      <div id="shawwal-grid" class="grid"></div>
+    </div>
+    <div id="missed" class="tab-content">
+      <div id="missed-grid" class="grid"></div>
+    </div>
+    <div id="quran" class="tab-content">
+      <div id="quran-grid" class="grid"></div>
+    </div>
+  </main>
+
+  <div id="year-picker" class="modal hidden">
+    <div class="modal-content">
+      <h2>Select Year</h2>
+      <div id="years-grid" class="grid"></div>
+      <button id="close-year-picker">Cancel</button>
+    </div>
+  </div>
+
+  <div id="date-picker" class="modal hidden">
+    <div class="modal-content">
+      <div id="date-picker-content"></div>
+    </div>
+  </div>
+
+  <div id="storage-status" class="storage-status hidden">
+    Storage: <span id="storage-indicator"></span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
