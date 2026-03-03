@@ -1,10 +1,10 @@
-const CACHE_NAME = 'roza-tracker-v1';
+const CACHE_NAME = 'roza-tracker-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/app.js',
-  '/manifest.json'
+  './',
+  './index.html',
+  './style.css',
+  './app.js',
+  './manifest.json'
 ];
 
 self.addEventListener('install', (event) => {

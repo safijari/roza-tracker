@@ -3,6 +3,7 @@
   "short_name": "RozaTracker",
   "description": "Ramadan fasting tracker PWA",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2E7D32",
