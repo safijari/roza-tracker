@@ -2,6 +2,8 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 :root {
@@ -331,7 +333,7 @@ main {
   right: 0;
   background: var(--storage-bg);
   padding: 8px 16px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   border-top: 1px solid var(--border-color);
   text-align: center;
 }

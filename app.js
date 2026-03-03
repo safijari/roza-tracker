@@ -35,16 +35,23 @@ async function initDB() {
 }
 
 async function requestPersistentStorage() {
+  const indicator = document.getElementById('storage-indicator');
+  const statusDiv = document.getElementById('storage-status');
+  
   if (navigator.storage && navigator.storage.persist) {
     const isPersisted = await navigator.storage.persist();
-    const indicator = document.getElementById('storage-indicator');
-    const statusDiv = document.getElementById('storage-status');
-    statusDiv.classList.remove('hidden');
-    indicator.textContent = isPersisted ? 'Persistent ✓' : 'Not Persistent';
-    indicator.style.color = isPersisted ? 'green' : 'orange';
+    if (!isPersisted) {
+      statusDiv.classList.remove('hidden');
+      indicator.textContent = 'Warning: data might not persist. Install to homepage to fix.';
+      indicator.style.color = 'orange';
+    }
     return isPersisted;
+  } else {
+    statusDiv.classList.remove('hidden');
+    indicator.textContent = 'Warning: data might not persist. Install to homepage to fix.';
+    indicator.style.color = 'orange';
+    return false;
   }
-  return false;
 }
 
 async function getAllYears() {
