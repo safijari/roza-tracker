@@ -225,6 +225,11 @@ main {
   color: white;
 }
 
+.day-card.missed {
+  background: #e53935;
+  color: white;
+}
+
 .day-card.makeup {
   background: #4caf50;
   color: white;

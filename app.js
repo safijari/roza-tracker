@@ -340,8 +340,14 @@ async function loadData() {
   const completedRamadan = ramadanFasts.filter(f => f.status === 'DONE').length;
   const completedShawwal = shawwalFasts.filter(f => f.status === 'DONE').length;
   const completedQuran = quranFasts.filter(f => f.status === 'DONE').length;
+  const makeupCount = ramadanFasts.filter(f => f.isMakeup).length;
+  const totalFastsDone = completedRamadan + makeupCount;
   
   const missedFasts = ramadanFasts.filter(f => (f.status === 'PENDING' && f.date < todayStr) || f.isMakeup);
+  
+  const startDate = new Date(currentYear.gregorianStartDate + 'T12:00:00');
+  const todayDate = new Date(todayStr + 'T12:00:00');
+  const daysSinceStart = Math.max(0, Math.floor((todayDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
   
   document.getElementById('start-date-display').textContent = formatDate(currentYear.gregorianStartDate);
   document.getElementById('end-date-display').textContent = formatDate(currentYear.gregorianEndDate);
@@ -352,10 +358,9 @@ async function loadData() {
   renderGrid('quran-grid', quranFasts, 'quran');
   
   const totalRamadan = ramadanFasts.length || 30;
-  const ramadanDayProgress = Math.min(completedRamadan, totalRamadan);
   
-  updateProgress('ramadan', ramadanDayProgress, totalRamadan);
-  updateProgress('fasts', completedRamadan, totalRamadan);
+  updateProgress('ramadan', daysSinceStart, totalRamadan);
+  updateProgress('fasts', totalFastsDone, totalRamadan);
   updateProgress('shawwal', completedShawwal, 6);
   updateProgress('quran', completedQuran, 30);
 }
@@ -374,8 +379,9 @@ function renderGrid(containerId, fasts, type) {
     const isDone = fast.status === 'DONE';
     const isToday = fast.date === todayStr;
     const isMakeup = fast.isMakeup;
+    const isMissed = type === 'ramadan' && !isDone && fast.date < todayStr;
     
-    div.className = `day-card ${isDone ? 'done' : ''} ${isToday ? 'today' : ''} ${isMakeup ? 'makeup' : ''}`;
+    div.className = `day-card ${isDone ? 'done' : ''} ${isToday ? 'today' : ''} ${isMakeup ? 'makeup' : ''} ${isMissed ? 'missed' : ''}`;
     
     let content = '';
     if (type === 'quran') {
@@ -386,7 +392,7 @@ function renderGrid(containerId, fasts, type) {
       const date = new Date(fast.date + 'T12:00:00');
       content = `<span class="day-number">${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>`;
       if (isMakeup && fast.toggledAt) {
-        content += `<span class="makeup-date">Made up: ${formatDate(fast.toggledAt)}</span>`;
+        content += `<span class="makeup-date">${formatDate(fast.toggledAt)}</span>`;
       }
     } else if (type === 'shawwal') {
       const shawwalDay = index + 1;
@@ -402,6 +408,9 @@ function renderGrid(containerId, fasts, type) {
       const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'short' });
       content = `<span class="day-number">${date.getDate()}</span><span class="day-name">${dayOfWeek}</span>`;
       if (isDone) content += `<span class="check">✓</span>`;
+      if (isMakeup) {
+        content += `<span class="makeup-date">Made up</span>`;
+      }
     }
     
     div.innerHTML = content;
@@ -410,6 +419,8 @@ function renderGrid(containerId, fasts, type) {
   });
 }
 
+let confettiShown = {};
+
 function updateProgress(type, count, total) {
   const percentage = total > 0 ? (count / total) * 100 : 0;
   const bar = document.getElementById(`${type}-bar`);
@@ -417,6 +428,48 @@ function updateProgress(type, count, total) {
   
   bar.style.width = `${percentage}%`;
   text.textContent = `${count} / ${total}`;
+  
+  if (count >= total && total > 0 && !confettiShown[type]) {
+    confettiShown[type] = true;
+    showConfetti();
+  }
+}
+
+function showConfetti() {
+  const colors = ['#4caf50', '#ff9800', '#9c27b0', '#2196f3', '#f44336'];
+  const container = document.createElement('div');
+  container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden;';
+  document.body.appendChild(container);
+  
+  for (let i = 0; i < 100; i++) {
+    const confetti = document.createElement('div');
+    confetti.style.cssText = `
+      position:absolute;
+      width:10px;
+      height:10px;
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      left:${Math.random() * 100}%;
+      top:-10px;
+      opacity:${Math.random() * 0.7 + 0.3};
+      transform:rotate(${Math.random() * 360}deg);
+    `;
+    
+    const duration = Math.random() * 2000 + 2000;
+    const delay = Math.random() * 500;
+    
+    confetti.animate([
+      { top: '-10px', transform: `rotate(0deg)` },
+      { top: '100%', transform: `rotate(${Math.random() * 720 - 360}deg)` }
+    ], {
+      duration: duration,
+      delay: delay,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    });
+    
+    container.appendChild(confetti);
+  }
+  
+  setTimeout(() => container.remove(), 4000);
 }
 
 async function toggleFast(fast, type) {
@@ -541,6 +594,7 @@ document.getElementById('edit-start').onclick = () => openDatePicker('start');
 document.getElementById('edit-end').onclick = () => openDatePicker('end');
 
 async function init() {
+  confettiShown = {};
   document.documentElement.setAttribute('data-theme', 'dark');
   
   await initDB();
