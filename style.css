@@ -191,6 +191,11 @@ main {
   text-align: center;
   color: #4caf50;
   padding: 24px;
+  font-size: 1rem;
+}
+
+.hidden {
+  display: none;
 }
 
 .grid {

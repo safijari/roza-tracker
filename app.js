@@ -4,7 +4,7 @@ const DB_VERSION = 1;
 let db;
 let currentYear;
 const today = new Date();
-const todayStr = today.toISOString().split('T')[0];
+const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
 const currentHijriYear = getCurrentHijriYear();
 
 async function initDB() {
@@ -345,8 +345,9 @@ async function loadData() {
   
   const missedFasts = ramadanFasts.filter(f => (f.status === 'PENDING' && f.date < todayStr) || f.isMakeup);
   
-  const startDate = new Date(currentYear.gregorianStartDate + 'T12:00:00');
-  const todayDate = new Date(todayStr + 'T12:00:00');
+  const [startY, startM, startD] = currentYear.gregorianStartDate.split('-').map(Number);
+  const startDate = new Date(startY, startM - 1, startD);
+  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const daysSinceStart = Math.max(0, Math.floor((todayDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
   
   document.getElementById('start-date-display').textContent = formatDate(currentYear.gregorianStartDate);
@@ -369,9 +370,13 @@ function renderGrid(containerId, fasts, type) {
   const container = document.getElementById(containerId);
   container.innerHTML = '';
   
-  if (type === 'missed' && fasts.length === 0) {
-    container.innerHTML = '<p class="empty-message">No missed fasts! Alhumdulillah</p>';
-    return;
+  if (type === 'missed') {
+    const emptyMsg = document.getElementById('missed-empty');
+    if (fasts.length === 0) {
+      emptyMsg.classList.remove('hidden');
+    } else {
+      emptyMsg.classList.add('hidden');
+    }
   }
   
   fasts.forEach((fast, index) => {
