@@ -345,10 +345,7 @@ async function loadData() {
   
   const missedFasts = ramadanFasts.filter(f => (f.status === 'PENDING' && f.date < todayStr) || f.isMakeup);
   
-  const [startY, startM, startD] = currentYear.gregorianStartDate.split('-').map(Number);
-  const startDate = new Date(startY, startM - 1, startD);
-  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const daysSinceStart = Math.max(0, Math.floor((todayDate - startDate) / (1000 * 60 * 60 * 24)) + 1);
+  const daysSinceStart = ramadanFasts.filter(f => f.date <= todayStr).length;
   
   document.getElementById('start-date-display').textContent = formatDate(currentYear.gregorianStartDate);
   document.getElementById('end-date-display').textContent = formatDate(currentYear.gregorianEndDate);
