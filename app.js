@@ -426,6 +426,21 @@ function renderGrid(containerId, fasts, type) {
 
 let confettiShown = {};
 
+function loadConfettiState() {
+  try {
+    const stored = localStorage.getItem('confettiShown');
+    if (stored) {
+      confettiShown = JSON.parse(stored);
+    }
+  } catch (e) {}
+}
+
+function saveConfettiState() {
+  try {
+    localStorage.setItem('confettiShown', JSON.stringify(confettiShown));
+  } catch (e) {}
+}
+
 function updateProgress(type, count, total) {
   const percentage = total > 0 ? (count / total) * 100 : 0;
   const bar = document.getElementById(`${type}-bar`);
@@ -436,6 +451,7 @@ function updateProgress(type, count, total) {
   
   if (count >= total && total > 0 && !confettiShown[type]) {
     confettiShown[type] = true;
+    saveConfettiState();
     showConfetti();
   }
 }
@@ -599,7 +615,7 @@ document.getElementById('edit-start').onclick = () => openDatePicker('start');
 document.getElementById('edit-end').onclick = () => openDatePicker('end');
 
 async function init() {
-  confettiShown = {};
+  loadConfettiState();
   document.documentElement.setAttribute('data-theme', 'dark');
   
   await initDB();
